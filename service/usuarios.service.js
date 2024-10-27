@@ -1,5 +1,7 @@
 import { MongoClient, ObjectId } from "mongodb";
 import bcrypt, { genSalt } from "bcrypt";
+import { crearToken } from "./token.service.js";
+import jwt from "jsonwebtoken";
 
 const cliente = new MongoClient(
   "mongodb+srv://admin:admin@dwt4av-hibridas-cluster.boucf.mongodb.net/"
@@ -18,28 +20,35 @@ export async function createUser(usuario) {
   }
 
   const nuevoUsuario = { ...usuario, passwordConfirm: undefined };
-  nuevoUsuario.password = await bcrypt.hash(usuario.password, 10)
-
+  nuevoUsuario.password = await bcrypt.hash(usuario.password, 10);
 
   usuarios.insertOne(nuevoUsuario);
-  return {...nuevoUsuario, password: undefined};
+
+  return { ...nuevoUsuario, password: undefined };
 }
 
 export async function login(usuario) {
-    await cliente.connect();
+  await cliente.connect();
 
-    const existe = await usuarios.findOne({ email: usuario.email });
-  
-    if (!existe) {
-      return "No se pudo loguear";
-    }
+  const existe = await usuarios.findOne({ email: usuario.email });
 
-    const esValido = await bcrypt.compare(usuario.password, existe.password)
-  
+  if (!existe) {
+    return "No se pudo loguear";
+  }
 
-    if (!esValido) {
-        return "No se pudo loguear";
-    }
+  const esValido = await bcrypt.compare(usuario.password, existe.password);
 
-    return {...existe, password: undefined, passwordConfirm: undefined}
+  if (!esValido) {
+    return "No se pudo loguear";
+  }
+
+  console.log(existe)
+  const token = await crearToken(existe);
+
+  return {
+    ...existe,
+    token: token,
+    password: undefined,
+    passwordConfirm: undefined,
+  };
 }

@@ -20,6 +20,7 @@ export const loginSchema = yup.object({
     .string()
     .min(8)
     .max(16)
-    .matches(/[0-9]/, "La contrase;a debe tener al menos un numero.")
-    .matches(/[A-Z]/, "La contrase;a debe tener al menos una mayuscula."),
+    .matches(/[0-9]/, "La contraseña debe tener al menos un número.")
+    .matches(/[A-Z]/, "La contraseña debe tener al menos una mayúscula.")
+    .required(),
 });

@@ -1,13 +1,14 @@
 import { Router } from "express";
 import * as controllerVendedores from "../controller/vendedores-api.controller.js";
 import * as controllersPeugot from "../controller/autos-api.controller.js";
+import { validateToken } from "../../middleware/token.validate.middleware.js";
 
 const route = Router();
-route.get("/vendedores", controllerVendedores.getVendedores); // recurso
+route.get("/vendedores", [validateToken], controllerVendedores.getVendedores); // recurso
 
-route.get("/autos/vendedores/:vendedor", controllersPeugot.getAutosByVendedor); // recurso
+route.get("/autos/vendedores/:vendedor", [validateToken], controllersPeugot.getAutosByVendedor); // recurso
 
-route.post("/vendedores", controllerVendedores.postVendedores); // crear
+route.post("/vendedores", [validateToken], controllerVendedores.postVendedores); // crear
 
 
 export default route;
