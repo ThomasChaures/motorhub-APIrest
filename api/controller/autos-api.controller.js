@@ -8,7 +8,9 @@ export const getAutos = (req, res) => {
     .then((autos) => {
       res.status(200).json(autos);
     })
-    .catch((err) => console.log(err));
+    .catch((err) => {
+      res.status(400).json({message: err})
+    });
 };
 export const getAutosByVendedor = (req, res) => {
   let name = req.params.vendedor;
@@ -17,7 +19,9 @@ export const getAutosByVendedor = (req, res) => {
     .then((autos) => {
       res.status(200).json(autos);
     })
-    .catch((err) => console.log(err));
+    .catch((err) => {
+      res.status(400).json({message: err})
+    });
 };
 
 export const getAutoId = (req, res) => {
@@ -27,7 +31,9 @@ export const getAutoId = (req, res) => {
     .then((auto) => {
       res.status(200).json(auto);
     })
-    .catch((err) => console.log(err));
+    .catch((err) => {
+      res.status(400).json({message: err})
+    });
 };
 
 export const getAutoByType = (req, res) => {
@@ -36,33 +42,43 @@ export const getAutoByType = (req, res) => {
     .then((autos) => {
       res.status(200).json(autos);
     })
-    .catch((err) => console.log(err));
+    .catch((err) => {
+      res.status(400).json({message: err})
+    });
 };
 
 export const agregarAuto = (req, res) => {
   service
     .agregarAuto(req.body)
     .then((auto) => res.status(201).json(auto))
-    .catch((err) => console.log(err));
+    .catch((err) => {
+      res.status(400).json({message: err})
+    });
 };
 
 export const remplazarAuto = (req, res) => {
   service
     .remplazarAuto(req.params.id, req.body)
     .then((auto) => res.status(201).json(auto))
-    .catch((err) => console.log(err));
+    .catch((err) => {
+      res.status(400).json({message: err})
+    });
 };
 
 export const actualizarAuto = (req, res) => {
   service
     .actualizarAuto(req.params.id, req.body)
     .then((auto) => res.status(201).json(auto))
-    .catch((err) => console.log(err));
+    .catch((err) => {
+      res.status(400).json({message: err})
+    });
 };
 
 export const eliminadoLogico = (req, res) => {
   service
     .eliminadoLogico(req.params.id)
     .then((id) => res.status(202).json({ id: id }))
-    .catch((err) => console.log(err));
+    .catch((err) => {
+      res.status(400).json({message: err})
+    });
 };

@@ -6,7 +6,9 @@ export const getVendedores = (req, res) => {
     .then((vendedores) => {
       res.status(200).json(vendedores);
     })
-    .catch((err) => console.log(err));
+    .catch((err) => {
+      res.status(400).json({message: err})
+    });
 };
 
 export const postVendedores = async (req, res) => {
@@ -17,10 +19,14 @@ export const postVendedores = async (req, res) => {
                 service
             .agregarClienteApi(vendedor)
             .then((auto) => res.status(201).json(auto))
-            .catch((err) => console.log(err));
+            .catch((err) => {
+              res.status(400).json({message: err})
+            });
             }else{
                 throw err;
             }
         })
-        .catch((err) => {console.log('Este vendedor ya existe.')})
+        .catch((err) => {
+          res.status(400).json({message: 'El vendedor ya existe'})
+        });
 };
