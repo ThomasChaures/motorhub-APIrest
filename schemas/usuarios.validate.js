@@ -1,26 +1,37 @@
 import yup from "yup";
 
+
 export const usuarioSchema = yup.object({
-  email: yup.string().email().required(),
+  email: yup
+    .string()
+    .email("El email debe ser válido.")
+    .required("El email es obligatorio."),
+    
   password: yup
     .string()
-    .min(8)
-    .max(16)
-    .matches(/[0-9]/, "La contrase;a debe tener al menos un numero.")
-    .matches(/[A-Z]/, "La contrase;a debe tener al menos una mayuscula."),
+    .min(8, "La contraseña debe tener al menos 8 caracteres.")
+    .max(16, "La contraseña no debe tener más de 16 caracteres.")
+    .matches(/[0-9]/, "La contraseña debe tener al menos un número.")
+    .matches(/[A-Z]/, "La contraseña debe tener al menos una mayúscula.")
+    .required("La contraseña es obligatoria."),
+    
   passwordConfirm: yup
     .string()
-    .required()
-    .oneOf([yup.ref("password")]),
+    .required("La confirmación de la contraseña es obligatoria.")
+    .oneOf([yup.ref("password")], "Las contraseñas no coinciden."),
 });
 
 export const loginSchema = yup.object({
-  email: yup.string().email().required(),
+  email: yup
+    .string()
+    .email("El email debe ser válido.")
+    .required("El email es obligatorio."),
+    
   password: yup
     .string()
-    .min(8)
-    .max(16)
+    .min(8, "La contraseña debe tener al menos 8 caracteres.")
+    .max(16, "La contraseña no debe tener más de 16 caracteres.")
     .matches(/[0-9]/, "La contraseña debe tener al menos un número.")
     .matches(/[A-Z]/, "La contraseña debe tener al menos una mayúscula.")
-    .required(),
+    .required("La contraseña es obligatoria."),
 });
