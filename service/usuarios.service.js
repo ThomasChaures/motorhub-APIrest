@@ -1,7 +1,6 @@
 import { MongoClient, ObjectId } from "mongodb";
-import bcrypt, { genSalt } from "bcrypt";
+import bcrypt from "bcrypt";
 import { crearToken } from "./token.service.js";
-
 
 const cliente = new MongoClient(
   "mongodb+srv://admin:admin@dwt4av-hibridas-cluster.boucf.mongodb.net/"
@@ -16,7 +15,7 @@ export async function createUser(usuario) {
   const existe = await usuarios.findOne({ email: usuario.email });
 
   if (existe) {
-    return new Error({email: "Usuario no disponible."});
+    return { error: "Usuario no disponible." };
   }
 
   const nuevoUsuario = { ...usuario, passwordConfirm: undefined };
@@ -24,14 +23,19 @@ export async function createUser(usuario) {
 
   const res = await usuarios.insertOne(nuevoUsuario);
 
+  const objId = new ObjectId(res.insertedId.toString());
+
   const user = {
-    id: res.insertedId.toString(),
+    _id: objId,
     email: usuario.email,
   };
 
-  const token = await crearToken(user);
+  let token;
+  if (res) {
+    token = await crearToken(user);
+  }
 
-  console.log(user)
+  console.log(user);
   return { ...nuevoUsuario, token: token, password: undefined };
 }
 
@@ -41,13 +45,13 @@ export async function login(usuario) {
   const existe = await usuarios.findOne({ email: usuario.email });
 
   if (!existe) {
-    return "No se pudo loguear";
+    return { error: "No se pudo loguear" };
   }
 
   const esValido = await bcrypt.compare(usuario.password, existe.password);
 
   if (!esValido) {
-    return "No se pudo loguear";
+    return { error: "No se pudo loguear" };
   }
 
   console.log(existe);

@@ -8,14 +8,9 @@ const db = cliente.db("AH20232CP1");
 const tokens = db.collection("tokens");
 
 export async function crearToken(usuario) {
-  const token = jwt.sign(
-    {
-      id: usuario.id,
-      email: usuario.email,
-    },
-    SECRET_KEY,
-    { expiresIn: "2h" }
-  );
+
+  console.log(usuario)
+  const token = jwt.sign({...usuario, password: undefined}, SECRET_KEY, {expiresIn: "2h"} )
 
   await cliente.connect();
 
@@ -27,9 +22,11 @@ export async function crearToken(usuario) {
 export async function validarToken(token) {
     try{
         const payload = jwt.verify(token, SECRET_KEY);
+        console.log(payload)
         const sesionActiva = await tokens.findOne({token, usuario_id: new ObjectId(payload._id)})
+        console.log(sesionActiva)
         if(!sesionActiva) throw new Error("Token invalido")
-        if(payload.exp > (new Date().getTime() / 1000)) throw new Error('Token expirado')
+        if(payload.exp > (new Date().getTime())) throw new Error('Token expirado')
         return payload
     }catch(error){
         throw new Error("Token invalido")
