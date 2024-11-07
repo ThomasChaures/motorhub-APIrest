@@ -64,3 +64,15 @@ export async function login(usuario) {
     passwordConfirm: undefined,
   };
 }
+
+
+export async function getUser(id){
+  await cliente.connect();
+
+  console.log(id)
+  const existe = await usuarios.findOne({ _id: new ObjectId(id) });
+
+  if(!existe) throw new Error("No existe este usuario")
+    console.log(`EXISTE: ${existe._id}`)
+    return {...existe, password: undefined, passwordConfirm: undefined}
+}

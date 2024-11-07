@@ -2,7 +2,7 @@ import yup from "yup";
 
 export const autoSchema = yup.object({
   img: yup.string().required(),
-  marca: yup.string().required(),
+  brand: yup.string().required(),
   modelo: yup.string().required(),
   modelo: yup.string().required(),
   tipo: yup.string().required(),
@@ -15,6 +15,7 @@ export const autoSchema = yup.object({
     .max(2024, "El año como maximo debe ser: 2024"),
   engine: yup.string().required(),
   vendedor: yup.string().nullable(),
+  status: yup.string().nullable(),
   horsepower: yup.number().required(),
   link: yup.string().url().nullable(),
 });
