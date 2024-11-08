@@ -1,5 +1,4 @@
 import express from "express";
-import autosRutas from "./routes/auto.routes.js";
 import apiAutosRutas from "./api/routes/autos-api.routes.js";
 import apiVendedoresRutas from "./api/routes/vendedores-api.routes.js";
 import apiUsuariosRutas from "./api/routes/usuarios.api.routes.js";
@@ -16,7 +15,7 @@ const corsOptions = {
 };
 app.use(cors(corsOptions));
 
-app.use(autosRutas);
+
 app.use("/api", apiAutosRutas);
 app.use("/api", apiVendedoresRutas);
 app.use("/api", apiUsuariosRutas);

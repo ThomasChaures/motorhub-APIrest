@@ -1,6 +1,7 @@
 import { MongoClient, ObjectId } from "mongodb";
 import bcrypt from "bcrypt";
 import { crearToken } from "./token.service.js";
+import * as  serviceVendedores from './vendedores.service.js'
 
 const cliente = new MongoClient(
   "mongodb+srv://admin:admin@dwt4av-hibridas-cluster.boucf.mongodb.net/"
@@ -24,6 +25,7 @@ export async function createUser(usuario) {
   const res = await usuarios.insertOne(nuevoUsuario);
 
   const objId = new ObjectId(res.insertedId.toString());
+  
 
   const user = {
     _id: objId,
@@ -34,6 +36,14 @@ export async function createUser(usuario) {
   if (res) {
     token = await crearToken(user);
   }
+
+  const vendCliente = {
+    name: usuario.name, 
+    surname: usuario.surname,
+    email: usuario.email,
+    autos_vendiendo: [],
+  };
+  await serviceVendedores.agregarCliente(vendCliente);
 
   console.log(user);
   return { ...nuevoUsuario, token: token, password: undefined };

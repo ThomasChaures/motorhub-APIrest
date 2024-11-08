@@ -16,18 +16,30 @@ export const getAutos = async (filtros = {}) => {
     filterMongo.horsepower = { $eq: parseInt(filtros.horsepower) };
   }
 
+  if (filtros.brand !== undefined) {
+    filterMongo.brand = { $eq: filtros.brand };
+  }
+
+  if (filtros.usage !== undefined) {
+    filterMongo.usage = { $eq: filtros.usage };
+  }
+
+  if (filtros.oficial !== undefined) {
+    filterMongo.vendedor = { $exists: true, $ne: null };
+  }
+
   if (filtros.precioMinimo !== undefined || filtros.preciMaximo !== undefined) {
     filterMongo.$and = [];
 
     if (filtros.precioMinimo !== undefined) {
       filterMongo.$and.push({
-        price_usd: { $gt: parseInt(filtros.precioMinimo) },
+        price: { $gt: parseInt(filtros.precioMinimo) },
       });
     }
 
     if (filtros.precioMaximo !== undefined) {
       filterMongo.$and.push({
-        price_usd: { $lt: parseInt(filtros.precioMaximo) },
+        price: { $lt: parseInt(filtros.precioMaximo) },
       });
     }
   }
@@ -81,9 +93,9 @@ export const agregarAuto = async (auto) => {
 
     if (!vendedor) {
       const vendCliente = {
-        img: "example.jpg",
-        nombre: auto.vendedor,
-        description: "Usuario vendedor de autos usados de Peugot",
+        name: auto.vendedor.name,
+        surname: auto.vendedor.surname,
+        email: auto.vendedor.email,
         autos_vendiendo: [],
       };
       await serviceVendedores.agregarCliente(vendCliente);
@@ -130,5 +142,3 @@ export const actualizarAuto = async (id, autoActualizado) => {
     );
   return autoUpdate;
 };
-
-

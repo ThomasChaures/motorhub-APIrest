@@ -20,32 +20,32 @@ export const agregarCliente = async (vendedor) => {
   return vendedor;
 };
 
-export const getClienteNombre = async (nombre) => {
+export const getClienteNombre = async (email) => {
   const vendedor = await db
     .collection("Vendedores")
-    .findOne({ nombre: nombre });
+    .findOne({ email: email });
   return vendedor;
 };
 
-export const getVendedorByNombre = async (name) => {
+export const getVendedorByNombre = async (email) => {
   const vendedor = await db
     .collection("Vendedores")
-    .findOne({ nombre: name })
+    .findOne({ email: email })
   return vendedor;
 };
 
-export const getAutosDelVendedor = async (name) => {
-  const vendedor = await db.collection("Vendedores").findOne({ nombre: name });
+export const getAutosDelVendedor = async (email) => {
+  const vendedor = await db.collection("Vendedores").findOne({ email: email });
   const autos = vendedor.autos_vendiendo || [];
   console.log("Vendedor", vendedor);
   console.log(autos);
   return autos;
 };
 
-export const agregarAutosAlVendedor = async (auto, vendedorNombre) => {
+export const agregarAutosAlVendedor = async (auto, email) => {
   const vendedor = await db
     .collection("Vendedores")
-    .findOne({ nombre: vendedorNombre });
+    .findOne({ email: email });
 
   const autos = vendedor.autos_vendiendo || [];
   autos.push(auto);
@@ -53,7 +53,7 @@ export const agregarAutosAlVendedor = async (auto, vendedorNombre) => {
   const vendedorActualizado = await db
     .collection("Vendedores")
     .updateOne(
-      { nombre: vendedor.nombre },
+      { email: vendedor.email },
       { $set: { autos_vendiendo: autos } }
     );
 
