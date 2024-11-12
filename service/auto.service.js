@@ -1,6 +1,7 @@
 import { MongoClient, ObjectId } from "mongodb";
 import * as serviceVendedores from "./vendedores.service.js";
 
+
 const cliente = new MongoClient(
   "mongodb+srv://admin:admin@dwt4av-hibridas-cluster.boucf.mongodb.net/"
 );
@@ -132,6 +133,55 @@ export const remplazarAuto = async (id, autoRemplazado) => {
   return autoRemplazado;
 };
 
+
+export const comentarAuto = async (id, comentario) => {
+    try{
+      await cliente.connect()
+      const auto = await db.collection("Autos").findOne( { _id: new ObjectId(id) })
+
+      if(!auto){
+        throw new Error("Auto no encontrado");
+      }
+
+      const arrayDeComentarios = auto.comments || [];
+
+      arrayDeComentarios.push(comentario);
+
+      await db.collection("Autos").updateOne(
+        { _id: new ObjectId(id) },
+        {$set: {comments: arrayDeComentarios}}
+      )
+      console.log("Comentario agregado exitosamente");
+      
+    }catch(err){
+      console.error("Error al agregar el comentario:", err);
+    }
+} 
+
+
+export const responderComentario = async (id, comentarioIndex, respuesta) => {
+  try {
+    await cliente.connect();
+    const auto = await db.collection("Autos").findOne( { _id: new ObjectId(id) })
+    if(!auto){
+      throw new Error("Auto no encontrado");
+    }
+    if (!auto.comments || !auto.comments[comentarioIndex]) {
+      throw new Error("Comentario no encontrado");
+    }
+
+    const arrayDeComentarios = auto.comments
+    arrayDeComentarios[comentarioIndex].answers.push(respuesta);
+    await db.collection("Autos").updateOne(
+      { _id: new ObjectId(id) },
+      {$set: {comments: arrayDeComentarios}}
+    )
+  } catch (error) {
+    
+  }
+}
+ 
+
 export const actualizarAuto = async (id, autoActualizado) => {
   await cliente.connect();
   const autoUpdate = await db
@@ -142,3 +192,4 @@ export const actualizarAuto = async (id, autoActualizado) => {
     );
   return autoUpdate;
 };
+

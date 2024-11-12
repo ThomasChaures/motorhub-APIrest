@@ -56,6 +56,27 @@ export const agregarAuto = (req, res) => {
     });
 };
 
+
+export const comentarAuto = (req, res) => {
+  const { id } = req.params;
+   service.comentarAuto(id, req.body)
+   .then((comentario) => res.status(201).json(comentario))
+   .catch((err) => {
+    res.status(400).json({message: err})
+  });
+}
+
+export const responderComentario = (req, res) => {
+  const { id } = req.params;
+  const {comentarioIndex, respuesta} = req.body
+   service.responderComentario(id, comentarioIndex, respuesta)
+   .then((comentario) => res.status(201).json(comentario))
+   .catch((err) => {
+    res.status(400).json({message: err})
+  });
+}
+
+
 export const remplazarAuto = (req, res) => {
   service
     .remplazarAuto(req.params.id, req.body)
