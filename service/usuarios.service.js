@@ -15,11 +15,12 @@ export async function createUser(usuario) {
 
   const existe = await usuarios.findOne({ email: usuario.email });
 
+
   if (existe) {
     return { error: "Usuario no disponible." };
   }
 
-  const nuevoUsuario = { ...usuario, passwordConfirm: undefined };
+  const nuevoUsuario = { ...usuario, passwordConfirm: undefined, role: 'User' };
   nuevoUsuario.password = await bcrypt.hash(usuario.password, 10);
 
   const res = await usuarios.insertOne(nuevoUsuario);

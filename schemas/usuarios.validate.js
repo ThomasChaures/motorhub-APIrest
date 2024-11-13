@@ -23,7 +23,7 @@ export const usuarioSchema = yup.object({
     .required("La confirmación de la contraseña es obligatoria.")
     .oneOf([yup.ref("password")], "Las contraseñas no coinciden."),
 
-  role: yup.string().required(),
+  role: yup.string(),
 });
 
 export const loginSchema = yup.object({
