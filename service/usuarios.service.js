@@ -87,3 +87,14 @@ export async function getUser(id){
     console.log(`EXISTE: ${existe._id}`)
     return {...existe, password: undefined, passwordConfirm: undefined}
 }
+
+export async function getUsers() {
+  // Connect to the database
+  await cliente.connect();
+
+  // Retrieve all users from the "usuarios" collection
+  const users = await db.collection("usuarios").find().toArray();
+
+  // Return the result
+  return users;
+}

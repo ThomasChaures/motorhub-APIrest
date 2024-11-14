@@ -94,6 +94,7 @@ export const agregarAuto = async (auto) => {
 
     if (!vendedor) {
       const vendCliente = {
+        user_id: auto.vendedor._id,
         name: auto.vendedor.name,
         surname: auto.vendedor.surname,
         email: auto.vendedor.email,

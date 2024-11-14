@@ -19,3 +19,9 @@ export function getUser(req, res){
     .then( (usuario) => res.status(200).json(usuario))
     .catch( () => res.status(400).json({message: "No se pudo obtener el usuario."}))
 }
+
+export function getUsers(req, res){
+    service.getUsers()
+    .then( (usuario) => res.status(200).json(usuario))
+    .catch( () => res.status(400).json({message: "No se pudo obtener el usuario."}))
+}
