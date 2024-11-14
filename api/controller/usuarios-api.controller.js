@@ -25,3 +25,10 @@ export function getUsers(req, res){
     .then( (usuario) => res.status(200).json(usuario))
     .catch( () => res.status(400).json({message: "No se pudo obtener el usuario."}))
 }
+
+export function getUserData(req, res){
+    console.log(req.body)
+    service.getUserRole(req.params.id)
+    .then( (usuario) => res.status(200).json(usuario))
+    .catch( () => res.status(400).json({message: "No se pudo obtener el usuario."}))
+}

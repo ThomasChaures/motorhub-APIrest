@@ -7,9 +7,11 @@ import {
 import { validateToken } from "../../middleware/token.validate.middleware.js";
 const route = Router();
 
-route.post("/usuarios", [validateUser], controller.createUser);
+route.post("/usuarios/register", [validateUser], controller.createUser);
 route.post("/usuarios/login", [login], controller.login);
 route.get("/usuario", [validateToken], controller.getUser);
+
+route.get("/usuario/:id", [validateToken], controller.getUser)
 
 route.get('/usuarios', [validateToken], controller.getUsers)
 
