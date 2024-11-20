@@ -9,8 +9,6 @@ export async function validateToken(req, res, next) {
     if (!usuario) return res.status(401).json({ message: "Token Invalido" });
 
     req.usuario = usuario;
-    // console.log("Token:", token);
-    // console.log("Usuario:", req.usuario);
     next();
   } catch (error) {
     res.status(401).json({ message: "Token Invalido" });

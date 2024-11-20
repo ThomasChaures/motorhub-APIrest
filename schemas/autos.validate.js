@@ -18,5 +18,6 @@ export const autoSchema = yup.object({
   status: yup.string().required(),
   horsepower: yup.number().required(),
   link: yup.string().url().nullable(),
+  eliminado: yup.boolean().required(),
   comments: yup.array().required()
 });

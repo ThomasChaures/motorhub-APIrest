@@ -1,5 +1,6 @@
 import { autoSchema } from "../schemas/autos.validate.js";
-import { getAuto } from "../../front/src/service/autos.service.js";
+import { getAutoId } from "../service/auto.service.js";
+import * as service from "../service/token.service.js";
 
 export async function validateAuto(req, res, next) {
   try {
@@ -16,25 +17,28 @@ export async function validateAuto(req, res, next) {
 
 export async function validateAction(req, res, next) {
   try {
-    const user = req.usuario;
+    const token = req.headers["auth-token"];
+    const user = await service.validarToken(token);  
+
     const autoId = req.params.id;
+
+ 
+    const auto = await getAutoId(autoId); 
+
 
     if (!auto) {
       return res.status(404).json({ message: "Auto no encontrado" });
     }
 
-    const auto = getAuto(autoId);
 
-    if (user.role === "Admin") {
-      next();
-    } else if (auto.vendedor._id === user._id) {
-      next();
+    if (user.role === "Admin" || auto.vendedor.email === user.email) {
+      return next(); 
     }
 
-    return res
-      .status(404)
-      .json({ message: "No tenes permisos para realizar esta accion." });
+  
+    return res.status(403).json({ message: "No tenes permisos para realizar esta accion." });
   } catch (error) {
-    return res.status(500).json({ message: "Error en el servidor" });
+    return res.status(500).json({ message: "Error en el servidor", error: error.message });
   }
 }
+
