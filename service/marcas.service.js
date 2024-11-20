@@ -36,33 +36,41 @@ export const agregarAutoRelacionMarca = async (auto) => {
 };
 
 export const eliminarAutoDeMarcaLogico = async (auto_id, marca) => {
-    try {
-      const brand = await db.collection("Marcas").findOne({ marca: marca });
-  
-      if (!brand) {
-        throw new Error("Marca no encontrada");
-      }
-  
-      const autoIndex = brand.autos.findIndex((auto) => {
-        auto.auto_id === auto_id
-      });
-  
+  try {
+    const brand = await db.collection("Marcas").findOne({ marca: marca });
 
-  
-     
-      const nuevosAutos = brand.autos.map((auto) =>
-        auto.auto_id === auto_id ? { ...auto, eliminado: true } : auto
-      );
-  
-      
-      await db
-        .collection("Marcas")
-        .updateOne({ marca: marca }, { $set: { autos: nuevosAutos } });
-  
-      return { auto_id, marca, eliminado: true };
-    } catch (error) {
-      console.error("Error al eliminar auto de marca:", error);
-      throw error;
+    if (!brand) {
+      throw new Error("Marca no encontrada");
     }
-  };
-  
+
+    const autoIndex = brand.autos.findIndex((auto) => {
+      auto.auto_id === auto_id;
+    });
+
+    const nuevosAutos = brand.autos.map((auto) =>
+      auto.auto_id === auto_id ? { ...auto, eliminado: true } : auto
+    );
+
+    await db
+      .collection("Marcas")
+      .updateOne({ marca: marca }, { $set: { autos: nuevosAutos } });
+
+    return { auto_id, marca, eliminado: true };
+  } catch (error) {
+    console.error("Error al eliminar auto de marca:", error);
+    throw error;
+  }
+};
+
+export const getMarcas = async () => {
+  await cliente.connect();
+  return db.collection("Marcas").find().toArray();
+};
+
+export const getMarca = async (marca) => {
+  await cliente.connect();
+
+  const datos = await db.collection("Marcas").findOne({ marca: marca });
+
+  return datos;
+};
