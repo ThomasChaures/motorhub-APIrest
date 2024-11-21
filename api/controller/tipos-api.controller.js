@@ -1,0 +1,1 @@
+import * as service from '../../service/tipos.service.js'

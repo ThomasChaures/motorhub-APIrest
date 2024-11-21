@@ -6,6 +6,12 @@ export function createUser(req, res){
         .catch((err) => res.status(400).json({message: err}))
 }
 
+export function createAdmin(req, res){
+    service.createAdmin(req.body)
+    .then((usuario) => res.status(201).json({usuario}))
+    .catch((err) => res.status(400).json({message: err}))
+}
+
 
 export function login(req, res){
     service.login(req.body)

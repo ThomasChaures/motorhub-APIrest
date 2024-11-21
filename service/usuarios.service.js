@@ -19,7 +19,7 @@ export async function createUser(usuario) {
     return { error: "Usuario no disponible." };
   }
 
-  const nuevoUsuario = { ...usuario, passwordConfirm: undefined, role: "User" };
+  const nuevoUsuario = { ...usuario, eliminado: false, passwordConfirm: undefined, role: "User" };
   nuevoUsuario.password = await bcrypt.hash(usuario.password, 10);
 
   const res = await usuarios.insertOne(nuevoUsuario);
@@ -41,11 +41,39 @@ export async function createUser(usuario) {
     surname: usuario.surname,
     email: usuario.email,
     autos_vendiendo: [],
+    eliminado: false,
   };
   await serviceVendedores.agregarCliente(vendCliente);
 
   console.log(user);
   return { ...nuevoUsuario, token: token, password: undefined };
+}
+
+export async function createAdmin(usuario) {
+  await cliente.connect();
+
+  const existe = await usuarios.findOne({ email: usuario.email });
+
+  if (existe) {
+    return { error: "Usuario no disponible." };
+  }
+
+  const nuevoUsuario = { ...usuario, eliminado: false, passwordConfirm: undefined,};
+  nuevoUsuario.password = await bcrypt.hash(usuario.password, 10);
+
+  const res = await usuarios.insertOne(nuevoUsuario);
+
+  const vendCliente = {
+    name: usuario.name,
+    surname: usuario.surname,
+    email: usuario.email,
+    autos_vendiendo: [],
+    eliminado: false
+  };
+  await serviceVendedores.agregarCliente(vendCliente);
+
+  console.log(user);
+  return { ...nuevoUsuario, password: undefined };
 }
 
 export async function login(usuario) {

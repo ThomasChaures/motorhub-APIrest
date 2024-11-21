@@ -58,7 +58,6 @@ export const eliminarAutoDeMarcaLogico = async (auto_id, marca) => {
     return { auto_id, marca, eliminado: true };
   } catch (error) {
     console.error("Error al eliminar auto de marca:", error);
-    throw error;
   }
 };
 
@@ -74,3 +73,19 @@ export const getMarca = async (marca) => {
 
   return datos;
 };
+
+export const addMarca = async (marca) => {
+    try {
+      await cliente.connect();
+
+      const existe = await db.collection("Marcas").findOne({ marca: marca.marca });
+    
+      if(existe){
+        throw new Error('Esta marca ya esta registrada.')
+      }
+      const res = await db.collection("Marcas").insertOne(marca);
+      return marca;
+    } catch (error) {
+      console.error("Error al eliminar auto de marca:", error);
+    }
+}

@@ -18,7 +18,13 @@ export const getMarca = (req, res) => {
     });
 };
 
-
 export const addMarca = (req, res) => {
-    
-}
+  service
+    .addMarca(req.body)
+    .then((marca) => {
+      res.status(201).json(marca);
+    })
+    .catch((error) => {
+      res.status(400).json({ message: error });
+    });
+};

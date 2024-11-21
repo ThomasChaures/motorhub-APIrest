@@ -3,6 +3,7 @@ import apiAutosRutas from "./api/routes/autos-api.routes.js";
 import apiVendedoresRutas from "./api/routes/vendedores-api.routes.js";
 import apiUsuariosRutas from "./api/routes/usuarios.api.routes.js";
 import apiMarcasRutas from "./api/routes/marcas-api.routes.js";
+import apiTiposRutas from "./api/routes/tipos-api.routes.js"
 import cors from "cors";
 
 const app = express();
@@ -20,5 +21,6 @@ app.use("/api", apiAutosRutas);
 app.use("/api", apiVendedoresRutas);
 app.use("/api", apiUsuariosRutas);
 app.use("/api", apiMarcasRutas);
+app.use("/api", apiTiposRutas)
 
 app.listen(3333, () => console.log("Server Funcando"));

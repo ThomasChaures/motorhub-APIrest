@@ -59,6 +59,7 @@ export const agregarAuto = (req, res) => {
 
 export const comentarAuto = (req, res) => {
   const { id } = req.params;
+  console.log(req.body)
    service.comentarAuto(id, req.body)
    .then((comentario) => res.status(201).json(comentario))
    .catch((err) => {

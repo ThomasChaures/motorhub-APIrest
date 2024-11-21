@@ -11,7 +11,10 @@ export const getClienteApi = async () => {
 
 export const agregarClienteApi = async (vendedor) => {
   await cliente.connect()
-  await db.collection("Vendedores").insertOne(vendedor);
+
+  const nuevoVendedor = {...vendedor, eliminado: false,}
+
+  await db.collection("Vendedores").insertOne(nuevoVendedor);
   return vendedor;
 };
 

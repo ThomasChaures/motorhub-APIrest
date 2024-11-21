@@ -1,9 +1,8 @@
 import yup from "yup";
 
-export const comentarioSchema = yup.object({
+export const respuestaSchema = yup.object({
     name: yup.string().required(),
     surname: yup.string().required(),
     text: yup.string().required(),
-    answers: yup.array(),
     eliminado: yup.boolean()
 })

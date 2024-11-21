@@ -1,6 +1,7 @@
 import { MongoClient, ObjectId } from "mongodb";
 import * as serviceVendedores from "./vendedores.service.js";
 import * as serviceMarcas from "./marcas.service.js";
+import * as serviceTipos from "./tipos.service.js";
 
 const cliente = new MongoClient(
   "mongodb+srv://admin:admin@dwt4av-hibridas-cluster.boucf.mongodb.net/"
@@ -102,7 +103,9 @@ export const agregarAuto = async (auto) => {
       await serviceVendedores.agregarCliente(vendCliente);
     }
   }
-  const res = await db.collection("Autos").insertOne(auto);
+
+  const nuevoAuto = {...auto, eliminado: false}
+  const res = await db.collection("Autos").insertOne(nuevoAuto);
 
   const autoId = res.insertedId.toString();
   console.log("ID del auto insertado:", autoId);
@@ -113,12 +116,13 @@ export const agregarAuto = async (auto) => {
   }
 
   const autoMarca = {
-    ...auto,
+    ...nuevoAuto,
     auto_id: autoId,
   };
   console.log(autoMarca);
 
   await serviceMarcas.agregarAutoRelacionMarca(autoMarca);
+  await serviceTipos.agregarAutoRelacionTipo(autoMarca);
 
   return auto;
 };
@@ -128,7 +132,7 @@ export const eliminadoLogico = async (id) => {
   const datos = await db
     .collection("Autos")
     .findOne({ _id: ObjectId.createFromHexString(id) });
-  
+
   await db
     .collection("Autos")
     .updateOne(
@@ -136,8 +140,8 @@ export const eliminadoLogico = async (id) => {
       { $set: { eliminado: true } }
     );
 
-  await serviceMarcas.eliminarAutoDeMarcaLogico(id, datos.brand)
-    
+  await serviceMarcas.eliminarAutoDeMarcaLogico(id, datos.brand);
+  await serviceTipos.eliminarAutoDeTipoLogico(id, datos.type)
   return id;
 };
 
@@ -160,10 +164,13 @@ export const comentarAuto = async (id, comentario) => {
       throw new Error("Auto no encontrado");
     }
 
-    const arrayDeComentarios = auto.comments || [];
+    const nuevoComentario = {...comentario, answers: []}
 
-    arrayDeComentarios.push(comentario);
+    const arrayDeComentarios = auto.comments;
 
+    arrayDeComentarios.push(nuevoComentario);
+
+    console.log(arrayDeComentarios)
     await db
       .collection("Autos")
       .updateOne(
