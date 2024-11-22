@@ -86,47 +86,63 @@ export const getAutoByType = async (type) => {
 };
 
 export const agregarAuto = async (auto) => {
-  await cliente.connect();
-  console.log(auto);
-  console.log(auto.vendedor);
-  if (auto.vendedor) {
-    let vendedor = await serviceVendedores.getClienteNombre(auto.vendedor);
+  try {
+    await cliente.connect();
+    
 
-    if (!vendedor) {
-      const vendCliente = {
-        user_id: auto.vendedor._id,
-        name: auto.vendedor.name,
-        surname: auto.vendedor.surname,
-        email: auto.vendedor.email,
-        autos_vendiendo: [],
-      };
-      await serviceVendedores.agregarCliente(vendCliente);
+    if (auto.vendedor) {
+      let vendedor = await serviceVendedores.getClienteNombre(auto.vendedor);
+      if (!vendedor) {
+        const vendCliente = {
+          user_id: auto.vendedor.user_id,
+          name: auto.vendedor.name,
+          surname: auto.vendedor.surname,
+          email: auto.vendedor.email,
+          autos_vendiendo: [],
+        };
+        await serviceVendedores.agregarCliente(vendCliente);
+      }
     }
+
+
+    const nuevoAuto = {
+      ...auto,
+      comments: [],
+      eliminado: false,
+      status: 'for sale'
+    };
+
+
+    const res = await db.collection("Autos").insertOne(nuevoAuto);
+    const autoId = res.insertedId.toString();
+
+    const autoMarca = {
+      ...nuevoAuto,
+      auto_id: autoId,
+    };
+
+   
+    const operaciones = [
+      serviceMarcas.agregarAutoRelacionMarca(autoMarca),
+      serviceTipos.agregarAutoRelacionTipo(autoMarca)
+    ];
+
+ 
+    if (auto.vendedor) {
+      operaciones.push(
+        serviceVendedores.agregarAutosAlVendedor(nuevoAuto, auto.vendedor.email)
+      );
+    }
+
+    
+    await Promise.all(operaciones);
+
+    return auto;
+  } catch (error) {
+    console.error('Error al agregar auto:', error);
+    throw error;
   }
-
-  const nuevoAuto = {...auto, eliminado: false}
-  const res = await db.collection("Autos").insertOne(nuevoAuto);
-
-  const autoId = res.insertedId.toString();
-  console.log("ID del auto insertado:", autoId);
-
-  if (auto.vendedor) {
-    serviceVendedores.agregarAutosAlVendedor(autoId, auto.vendedor);
-    serviceVendedores.getAutosDelVendedor(auto.vendedor);
-  }
-
-  const autoMarca = {
-    ...nuevoAuto,
-    auto_id: autoId,
-  };
-  console.log(autoMarca);
-
-  await serviceMarcas.agregarAutoRelacionMarca(autoMarca);
-  await serviceTipos.agregarAutoRelacionTipo(autoMarca);
-
-  return auto;
 };
-
 export const eliminadoLogico = async (id) => {
   await cliente.connect();
   const datos = await db

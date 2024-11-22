@@ -39,18 +39,23 @@ export const getVendedorByNombre = async (email) => {
 
 export const getAutosDelVendedor = async (email) => {
   const vendedor = await db.collection("Vendedores").findOne({ email: email });
-  const autos = vendedor.autos_vendiendo || [];
+  console.log(email)
+  const autos = vendedor?.autos_vendiendo || [];
   console.log("Vendedor", vendedor);
   console.log(autos);
   return autos;
 };
 
 export const agregarAutosAlVendedor = async (auto, email) => {
+
+  console.log('auto', auto)
+
+  console.log('user', email)
   const vendedor = await db
     .collection("Vendedores")
     .findOne({ email: email });
 
-  const autos = vendedor.autos_vendiendo || [];
+  const autos = vendedor?.autos_vendiendo || [];
   autos.push(auto);
 
   const vendedorActualizado = await db

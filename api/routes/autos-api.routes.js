@@ -5,6 +5,7 @@ import { validateToken } from "../../middleware/token.validate.middleware.js";
 import { validateComentario } from "../../middleware/comentario.validate.middleware.js";
 import { validateAction } from "../../middleware/auto.validate.middleware.js";
 import { validateRespuesta } from "../../middleware/comentario.validate.middleware.js";
+
 const route = Router();
 
 route.get("/autos/tipos/:type", [validateToken], controllersPeugot.getAutoByType); // recurso

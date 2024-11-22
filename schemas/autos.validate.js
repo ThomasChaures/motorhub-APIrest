@@ -2,6 +2,8 @@ import yup from "yup";
 
 export const autoSchema = yup.object({
   img: yup.string().required(),
+  img2: yup.string().nullable(),
+  img3: yup.string().nullable(),
   brand: yup.string().required(),
   model: yup.string().required(),
   type: yup.string().required(),
@@ -13,10 +15,17 @@ export const autoSchema = yup.object({
     .min(1970, "El año como minimo debe ser: 1970")
     .max(2024, "El año como maximo debe ser: 2024"),
   engine: yup.string().required(),
-  vendedor: yup.string().nullable(),
+  vendedor: yup
+  .object()
+  .shape({
+    user_id: yup.string(),
+    name: yup.string(),
+    surname: yup.string(),
+    email: yup.string().email(),
+  }),
   usage: yup.string().nullable().required(),
-  status: yup.string().required(),
+  status: yup.string(),
   horsepower: yup.number().required(),
   eliminado: yup.boolean(),
-  comments: yup.array().required()
+  comments: yup.array()
 });

@@ -45,7 +45,6 @@ export const eliminarAutoDeTipoLogico = async (auto_id, tipo) => {
 
     const autoIndex = type.autos.findIndex((auto) => auto.auto_id === auto_id);
 
-
     const nuevosAutos = type.autos.map((auto) =>
       auto.auto_id === auto_id ? { ...auto, eliminado: true } : auto
     );
@@ -58,4 +57,16 @@ export const eliminarAutoDeTipoLogico = async (auto_id, tipo) => {
   } catch (error) {
     console.error("Error al eliminar auto de tipos:", error);
   }
+};
+
+export const getTipos = async () => {
+  await cliente.connect();
+  const datos = await Tipos.find().toArray();
+  return datos;
+};
+
+export const getTipo = async (tipo) => {
+  await cliente.connect();
+  const datos = await Tipos.findOne({ tipo: tipo });
+  return datos;
 };
