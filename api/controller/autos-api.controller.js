@@ -13,9 +13,9 @@ export const getAutos = (req, res) => {
     });
 };
 export const getAutosByVendedor = (req, res) => {
-  let name = req.params.vendedor;
+  let email = req.params.email;
   service
-    .getAutosByVendedor(name)
+    .getAutosByVendedor(email)
     .then((autos) => {
       res.status(200).json(autos);
     })

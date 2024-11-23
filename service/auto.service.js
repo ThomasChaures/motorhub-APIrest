@@ -62,19 +62,12 @@ export const getAutoId = async (id) => {
   return datos;
 };
 
-export const getAutosByVendedor = async (vendedor) => {
+export const getAutosByVendedor = async (email) => {
   await cliente.connect();
+``
+  const autos = await serviceVendedores.getAutosDelVendedor(email);
 
-  const carros = await serviceVendedores.getAutosDelVendedor(vendedor);
-
-  console.log(carros);
-
-  const autos = await db
-    .collection("Autos")
-    .find({
-      _id: { $in: carros.map((id) => ObjectId.createFromHexString(id)) },
-    })
-    .toArray();
+  console.log(usuario);
 
   return autos;
 };
