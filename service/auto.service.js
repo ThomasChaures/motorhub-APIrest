@@ -187,19 +187,19 @@ export const comentarAuto = async (id, comentario) => {
     arrayDeComentarios.push(nuevoComentario);
 
     console.log(arrayDeComentarios)
-    await db
+    return await db
       .collection("Autos")
       .updateOne(
         { _id: new ObjectId(id) },
         { $set: { comments: arrayDeComentarios } }
       );
-    console.log("Comentario agregado exitosamente");
+   
   } catch (err) {
     console.error("Error al agregar el comentario:", err);
   }
 };
 
-export const responderComentario = async (id, comentarioIndex, respuesta) => {
+export const responderComentario = async (id, respuesta, index) => {
   try {
     await cliente.connect();
     const auto = await db
@@ -208,13 +208,19 @@ export const responderComentario = async (id, comentarioIndex, respuesta) => {
     if (!auto) {
       throw new Error("Auto no encontrado");
     }
-    if (!auto.comments || !auto.comments[comentarioIndex]) {
+    if (!auto.comments || !auto.comments[index]) {
       throw new Error("Comentario no encontrado");
+    }else{
+      console.log(auto.comments[index])
     }
 
+    console.log(id, respuesta)
+
+    console.log(respuesta)
+
     const arrayDeComentarios = auto.comments;
-    arrayDeComentarios[comentarioIndex].answers.push(respuesta);
-    await db
+    arrayDeComentarios[index].answers.push(respuesta);
+    return await db
       .collection("Autos")
       .updateOne(
         { _id: new ObjectId(id) },

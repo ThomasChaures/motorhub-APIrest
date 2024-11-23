@@ -18,6 +18,6 @@ route.patch("/autos/:id", [validateAuto, validateToken, validateAction], control
 route.delete("/autos/:id", [validateToken, validateAction], controllersPeugot.eliminadoLogico); // eliminar
 
 route.post("/auto/:id/comentar",  [validateComentario],controllersPeugot.comentarAuto);
-route.post("/auto/:id/comentario/responder", [validateRespuesta] ,controllersPeugot.responderComentario);
+route.post("/auto/:id/comentario/:index/responder", [validateRespuesta] ,controllersPeugot.responderComentario);
 
 export default route;

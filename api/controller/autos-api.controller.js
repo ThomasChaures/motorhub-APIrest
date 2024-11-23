@@ -9,7 +9,7 @@ export const getAutos = (req, res) => {
       res.status(200).json(autos);
     })
     .catch((err) => {
-      res.status(400).json({message: err})
+      res.status(400).json({ message: err });
     });
 };
 export const getAutosByVendedor = (req, res) => {
@@ -20,7 +20,7 @@ export const getAutosByVendedor = (req, res) => {
       res.status(200).json(autos);
     })
     .catch((err) => {
-      res.status(400).json({message: err})
+      res.status(400).json({ message: err });
     });
 };
 
@@ -32,7 +32,7 @@ export const getAutoId = (req, res) => {
       res.status(200).json(auto);
     })
     .catch((err) => {
-      res.status(400).json({message: err})
+      res.status(400).json({ message: err });
     });
 };
 
@@ -43,7 +43,7 @@ export const getAutoByType = (req, res) => {
       res.status(200).json(autos);
     })
     .catch((err) => {
-      res.status(400).json({message: err})
+      res.status(400).json({ message: err });
     });
 };
 
@@ -52,38 +52,39 @@ export const agregarAuto = (req, res) => {
     .agregarAuto(req.body)
     .then((auto) => res.status(201).json(auto))
     .catch((err) => {
-      res.status(400).json({message: err})
+      res.status(400).json({ message: err });
     });
 };
 
-
 export const comentarAuto = (req, res) => {
   const { id } = req.params;
+  console.log(req.body);
+  service
+    .comentarAuto(id, req.body)
+    .then((comentario) => res.status(201).json(comentario))
+    .catch((err) => {
+      res.status(400).json({ message: err });
+    });
+};
+
+export const responderComentario = async (req, res) => {
+  const { id, index } = req.params;
+  console.log(req.params)
   console.log(req.body)
-   service.comentarAuto(id, req.body)
-   .then((comentario) => res.status(201).json(comentario))
-   .catch((err) => {
-    res.status(400).json({message: err})
-  });
-}
-
-export const responderComentario = (req, res) => {
-  const { id } = req.params;
-  const {comentarioIndex, respuesta} = req.body
-   service.responderComentario(id, comentarioIndex, respuesta)
-   .then((comentario) => res.status(201).json(comentario))
-   .catch((err) => {
-    res.status(400).json({message: err})
-  });
-}
-
+  service
+    .responderComentario(id, req.body, index)
+    .then((comentario) => res.status(201).json(comentario))
+    .catch((err) => {
+      res.status(400).json({ message: err });
+    });
+};
 
 export const remplazarAuto = (req, res) => {
   service
     .remplazarAuto(req.params.id, req.body)
     .then((auto) => res.status(201).json(auto))
     .catch((err) => {
-      res.status(400).json({message: err})
+      res.status(400).json({ message: err });
     });
 };
 
@@ -92,7 +93,7 @@ export const actualizarAuto = (req, res) => {
     .actualizarAuto(req.params.id, req.body)
     .then((auto) => res.status(201).json(auto))
     .catch((err) => {
-      res.status(400).json({message: err})
+      res.status(400).json({ message: err });
     });
 };
 
@@ -101,6 +102,6 @@ export const eliminadoLogico = (req, res) => {
     .eliminadoLogico(req.params.id)
     .then((id) => res.status(202).json({ id: id }))
     .catch((err) => {
-      res.status(400).json({message: err})
+      res.status(400).json({ message: err });
     });
 };
