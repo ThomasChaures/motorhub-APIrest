@@ -70,3 +70,20 @@ export const getTipo = async (tipo) => {
   const datos = await Tipos.findOne({ tipo: tipo });
   return datos;
 };
+
+export const addTipo = async (tipo) => {
+  try {
+    await cliente.connect();
+
+  const existe = await Tipos.findOne({ tipo: tipo.tipo });
+
+  if (existe) {
+    throw new Error("Este tipo ya esta registrado.");
+  }
+
+  const datos = await Tipos.insertOne(tipo);
+  return tipo;
+  } catch (error) {
+    console.error("Error al agregar tipo:", error);
+  }
+};

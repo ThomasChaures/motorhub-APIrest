@@ -86,6 +86,6 @@ export const addMarca = async (marca) => {
       const res = await db.collection("Marcas").insertOne(marca);
       return marca;
     } catch (error) {
-      console.error("Error al eliminar auto de marca:", error);
+      console.error("Error al agregar marca:", error);
     }
 }

@@ -17,3 +17,12 @@ export const getTipo = (req, res) => {
       res.status(400).json({ message: error });
     });
 };
+
+export const addTipo = (req, res) => {
+  service
+    .addTipo(req.body)
+    .then((tipo) => res.status(201).json(tipo))
+    .catch((error) => {
+      res.status(400).json({ message: error });
+    });
+};
