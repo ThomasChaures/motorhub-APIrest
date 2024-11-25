@@ -9,7 +9,7 @@ const cliente = new MongoClient(
 const db = cliente.db("AH20232CP1");
 
 export const getAutos = async (filtros = {}) => {
-  const filterMongo = { eliminado: { $ne: true } };
+  const filterMongo = { eliminado: { $ne: true }, status: {$eq: 'for sale'} };
   if (filtros.year !== undefined) {
     filterMongo.year = { $eq: parseInt(filtros.year) };
   }
@@ -102,7 +102,7 @@ export const agregarAuto = async (auto) => {
       ...auto,
       comments: [],
       eliminado: false,
-      status: 'for sale'
+      status: 'pending'
     };
 
 
@@ -230,5 +230,8 @@ export const actualizarAuto = async (id, autoActualizado) => {
       { _id: ObjectId.createFromHexString(id) },
       { $set: autoActualizado }
     );
+
+   await serviceMarcas.actualizarAutoMarca(id, autoActualizado.brand, autoActualizado) 
+   await serviceTipos.actualizarAutoTipo(id, autoActualizado.brand, autoActualizado) 
   return autoUpdate;
 };

@@ -61,6 +61,28 @@ export const eliminarAutoDeMarcaLogico = async (auto_id, marca) => {
   }
 };
 
+export const actualizarAutoMarca = async (auto_id, marca, auto) => {
+  const brand = await db.collection("Marcas").findOne({ marca: marca });
+
+  if (!brand) {
+    throw new Error("Marca no encontrada");
+  }
+
+  const autoIndex = brand.autos.findIndex((auto2) => {
+    auto2.auto_id === auto_id;
+  });
+
+  const nuevosAutos = brand.autos.map((auto2) =>
+    auto2.auto_id === auto_id ? { auto } : auto2
+  );
+
+  await db
+    .collection("Marcas")
+    .updateOne({ marca: marca }, { $set: { autos: nuevosAutos } });
+};
+
+export const remplazarAutoMarca = async (auto_id, marca) => {};
+
 export const getMarcas = async () => {
   await cliente.connect();
   return db.collection("Marcas").find().toArray();
@@ -75,17 +97,19 @@ export const getMarca = async (marca) => {
 };
 
 export const addMarca = async (marca) => {
-    try {
-      await cliente.connect();
+  try {
+    await cliente.connect();
 
-      const existe = await db.collection("Marcas").findOne({ marca: marca.marca });
-    
-      if(existe){
-        throw new Error('Esta marca ya esta registrada.')
-      }
-      const res = await db.collection("Marcas").insertOne(marca);
-      return marca;
-    } catch (error) {
-      console.error("Error al agregar marca:", error);
+    const existe = await db
+      .collection("Marcas")
+      .findOne({ marca: marca.marca });
+
+    if (existe) {
+      throw new Error("Esta marca ya esta registrada.");
     }
-}
+    const res = await db.collection("Marcas").insertOne(marca);
+    return marca;
+  } catch (error) {
+    console.error("Error al agregar marca:", error);
+  }
+};

@@ -1,9 +1,9 @@
 import yup from "yup";
 
 export const autoSchema = yup.object({
-  img: yup.string().required(),
-  img2: yup.string().nullable(),
-  img3: yup.string().nullable(),
+  img1: yup.string().required(),
+  img2: yup.string().required(),
+  img3: yup.string().required(),
   brand: yup.string().required(),
   model: yup.string().required(),
   type: yup.string().required(),
