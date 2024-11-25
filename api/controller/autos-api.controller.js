@@ -89,6 +89,7 @@ export const remplazarAuto = (req, res) => {
 };
 
 export const actualizarAuto = (req, res) => {
+  console.log(req.body)
   service
     .actualizarAuto(req.params.id, req.body)
     .then((auto) => res.status(201).json(auto))

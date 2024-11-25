@@ -4,6 +4,7 @@ import apiVendedoresRutas from "./api/routes/vendedores-api.routes.js";
 import apiUsuariosRutas from "./api/routes/usuarios.api.routes.js";
 import apiMarcasRutas from "./api/routes/marcas-api.routes.js";
 import apiTiposRutas from "./api/routes/tipos-api.routes.js";
+import apiLastActivity from './api/routes/lastActivity-routes.js'
 import multer from "multer";
 import cors from "cors";
 
@@ -14,7 +15,7 @@ app.use(express.json());
 
 const corsOptions = {
   origin: "http://localhost:5173",
-  methods: "GET, POST, PUT, DELETE",
+  methods: "GET, POST, PUT, PATCH, DELETE",
 };
 app.use(cors(corsOptions));
 
@@ -23,6 +24,7 @@ app.use("/api", apiVendedoresRutas);
 app.use("/api", apiUsuariosRutas);
 app.use("/api", apiMarcasRutas);
 app.use("/api", apiTiposRutas);
+app.use("/api", apiLastActivity)
 
 const storage = multer.diskStorage({
   destination: function(req, file, cb){
@@ -37,9 +39,9 @@ const storage = multer.diskStorage({
 
 app.post("/upload", upload.single('file'), (req, res) => {
   console.log(req.file)
-  const fileUrl = `http://localhost:5173/uploads/${req.file.filename}`;
+  const file = `${req.file.filename}`;
   console.log(fileUrl)
-  res.status(200).json({file: fileUrl})
+  res.status(200).json({file: file})
 } )
 app.use('/uploads', express.static('uploads'));
 

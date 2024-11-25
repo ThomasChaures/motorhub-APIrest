@@ -2,6 +2,7 @@ import { MongoClient, ObjectId } from "mongodb";
 import * as serviceVendedores from "./vendedores.service.js";
 import * as serviceMarcas from "./marcas.service.js";
 import * as serviceTipos from "./tipos.service.js";
+import { addUa } from "./lastActivity.service.js";
 
 const cliente = new MongoClient(
   "mongodb+srv://admin:admin@dwt4av-hibridas-cluster.boucf.mongodb.net/"
@@ -9,7 +10,7 @@ const cliente = new MongoClient(
 const db = cliente.db("AH20232CP1");
 
 export const getAutos = async (filtros = {}) => {
-  const filterMongo = { eliminado: { $ne: true }, status: {$eq: 'for sale'} };
+  const filterMongo = { eliminado: { $ne: true }, status: { $eq: "for sale" } };
   if (filtros.year !== undefined) {
     filterMongo.year = { $eq: parseInt(filtros.year) };
   }
@@ -64,7 +65,7 @@ export const getAutoId = async (id) => {
 
 export const getAutosByVendedor = async (email) => {
   await cliente.connect();
-``
+
   const autos = await serviceVendedores.getAutosDelVendedor(email);
 
   console.log(usuario);
@@ -81,7 +82,6 @@ export const getAutoByType = async (type) => {
 export const agregarAuto = async (auto) => {
   try {
     await cliente.connect();
-    
 
     if (auto.vendedor) {
       let vendedor = await serviceVendedores.getClienteNombre(auto.vendedor);
@@ -97,14 +97,12 @@ export const agregarAuto = async (auto) => {
       }
     }
 
-
     const nuevoAuto = {
       ...auto,
       comments: [],
       eliminado: false,
-      status: 'pending'
+      status: "pending",
     };
-
 
     const res = await db.collection("Autos").insertOne(nuevoAuto);
     const autoId = res.insertedId.toString();
@@ -114,25 +112,30 @@ export const agregarAuto = async (auto) => {
       auto_id: autoId,
     };
 
-   
+    let date = new Date();
+
     const operaciones = [
       serviceMarcas.agregarAutoRelacionMarca(autoMarca),
-      serviceTipos.agregarAutoRelacionTipo(autoMarca)
+      serviceTipos.agregarAutoRelacionTipo(autoMarca),
+      addUa(
+        auto?.vendedor.name,
+        auto?.vendedor.surname,
+        "Vehicle uploaded",
+        date
+      ),
     ];
 
- 
     if (auto.vendedor) {
       operaciones.push(
         serviceVendedores.agregarAutosAlVendedor(nuevoAuto, auto.vendedor.email)
       );
     }
 
-    
     await Promise.all(operaciones);
 
     return auto;
   } catch (error) {
-    console.error('Error al agregar auto:', error);
+    console.error("Error al agregar auto:", error);
     throw error;
   }
 };
@@ -150,7 +153,7 @@ export const eliminadoLogico = async (id) => {
     );
 
   await serviceMarcas.eliminarAutoDeMarcaLogico(id, datos.brand);
-  await serviceTipos.eliminarAutoDeTipoLogico(id, datos.type)
+  await serviceTipos.eliminarAutoDeTipoLogico(id, datos.type);
   return id;
 };
 
@@ -173,20 +176,19 @@ export const comentarAuto = async (id, comentario) => {
       throw new Error("Auto no encontrado");
     }
 
-    const nuevoComentario = {...comentario, answers: []}
+    const nuevoComentario = { ...comentario, answers: [] };
 
     const arrayDeComentarios = auto.comments;
 
     arrayDeComentarios.push(nuevoComentario);
 
-    console.log(arrayDeComentarios)
+    console.log(arrayDeComentarios);
     return await db
       .collection("Autos")
       .updateOne(
         { _id: new ObjectId(id) },
         { $set: { comments: arrayDeComentarios } }
       );
-   
   } catch (err) {
     console.error("Error al agregar el comentario:", err);
   }
@@ -203,13 +205,13 @@ export const responderComentario = async (id, respuesta, index) => {
     }
     if (!auto.comments || !auto.comments[index]) {
       throw new Error("Comentario no encontrado");
-    }else{
-      console.log(auto.comments[index])
+    } else {
+      console.log(auto.comments[index]);
     }
 
-    console.log(id, respuesta)
+    console.log(id, respuesta);
 
-    console.log(respuesta)
+    console.log(respuesta);
 
     const arrayDeComentarios = auto.comments;
     arrayDeComentarios[index].answers.push(respuesta);
@@ -231,7 +233,15 @@ export const actualizarAuto = async (id, autoActualizado) => {
       { $set: autoActualizado }
     );
 
-   await serviceMarcas.actualizarAutoMarca(id, autoActualizado.brand, autoActualizado) 
-   await serviceTipos.actualizarAutoTipo(id, autoActualizado.brand, autoActualizado) 
+  await serviceMarcas.actualizarAutoMarca(
+    id,
+    autoActualizado.brand,
+    autoActualizado
+  );
+  await serviceTipos.actualizarAutoTipo(
+    id,
+    autoActualizado.brand,
+    autoActualizado
+  );
   return autoUpdate;
 };

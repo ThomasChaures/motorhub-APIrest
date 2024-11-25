@@ -13,8 +13,8 @@ route.get("/autos/:id", [validateToken], controllersPeugot.getAutoId); // recurs
 route.get("/autos", [validateToken], controllersPeugot.getAutos); // recurso
 
 route.post("/autos", [validateAuto, validateToken], controllersPeugot.agregarAuto); // crear
-route.put("/autos/:id", [validateAuto, validateToken, validateAction], controllersPeugot.remplazarAuto); // remplazar
-route.patch("/autos/:id", [validateAuto, validateToken, validateAction], controllersPeugot.actualizarAuto); // actualizar
+route.put("/autos/:id", [ validateToken, validateAction], controllersPeugot.remplazarAuto); // remplazar
+route.patch("/autos/:id", [validateToken, validateAction], controllersPeugot.actualizarAuto); // actualizar
 route.delete("/autos/:id", [validateToken, validateAction], controllersPeugot.eliminadoLogico); // eliminar
 
 route.post("/auto/:id/comentar",  [validateComentario],controllersPeugot.comentarAuto);
