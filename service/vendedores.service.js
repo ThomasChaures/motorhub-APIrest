@@ -78,3 +78,55 @@ export const getVendedor = async (email) => {
 
   return userFinal;
 };
+
+export const eliminarAutoDeVendedorLogico = async (auto_id, email) => {
+  try {
+    const vendedor = await db
+      .collection("Vendedores")
+      .findOne({ email: email });
+
+    if (!vendedor) {
+      return console.log("No se encontro el vendedor");
+    }
+
+    const autoIndex = vendedor.autos_vendiendo.findIndex((auto) => {
+      auto.auto_id === auto_id;
+    });
+
+    if (autoIndex === null) {
+      return console.log("No se encontro el auto.");
+    }
+
+    const nuevosAutos = vendedor.autos_vendiendo.map((auto) => {
+      auto.auto_id === auto_id ? { ...auto, eliminado: true } : auto;
+    });
+
+    await db
+      .collection("Vendedores")
+      .updateOne({ email: email }, { $set: { autos_vendiendo: nuevosAutos } });
+
+    return { auto_id, vendedor, eliminado: true };
+  } catch (error) {
+    console.error("Error al eliminar auto de marca:", error);
+  }
+};
+
+export const actualizarAutoVendedor = async (auto_id, email, auto) => {
+  const vendedor = await db.collection("Vendedores").findOne({ email: email });
+
+  if (!vendedor) {
+    console.log("No se encontró el vendedor");
+    return;
+  }
+
+ 
+
+  const nuevosAutos = vendedor.autos_vendiendo.map((auto2) =>
+    auto2.auto_id === auto_id ? auto : auto2
+  );
+
+
+  return await db
+    .collection("Vendedores")
+    .updateOne({ email: email }, { $set: { autos_vendiendo: nuevosAutos } });
+};

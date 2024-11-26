@@ -12,6 +12,19 @@ export const getAutos = (req, res) => {
       res.status(400).json({ message: err });
     });
 };
+
+export const getAutosAll = (req, res) => {
+  const filtros = req.query;
+
+  service
+    .getAutosAll(filtros)
+    .then((autos) => {
+      res.status(200).json(autos);
+    })
+    .catch((err) => {
+      res.status(400).json({ message: err });
+    });
+};
 export const getAutosByVendedor = (req, res) => {
   let email = req.params.email;
   service
@@ -90,6 +103,7 @@ export const remplazarAuto = (req, res) => {
 
 export const actualizarAuto = (req, res) => {
   console.log(req.body)
+  console.log(req.params.id)
   service
     .actualizarAuto(req.params.id, req.body)
     .then((auto) => res.status(201).json(auto))

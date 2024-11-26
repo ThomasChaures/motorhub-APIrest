@@ -60,21 +60,24 @@ export const eliminarAutoDeTipoLogico = async (auto_id, tipo) => {
 };
 
 export const actualizarAutoTipo = async (auto_id, tipo, auto) => {
+  // Buscar el tipo de auto
   const types = await Tipos.findOne({ tipo: tipo });
 
-  if (!brand) {
-    throw new Error("Marca no encontrada");
+  // Validar que el tipo exista
+  if (!types) {
+    throw new Error("Tipo no encontrado");
   }
 
-  const autoIndex = types.autos.findIndex((auto2) => {
-    auto2.auto_id === auto_id;
-  });
-
+ 
+  // Actualizar el auto en el arreglo
   const nuevosAutos = types.autos.map((auto2) =>
-    auto2.auto_id === auto_id ? { auto } : auto2
+    auto2.auto_id === auto_id ? auto : auto2
   );
 
+  // Guardar los cambios en la base de datos
   await Tipos.updateOne({ tipo: tipo }, { $set: { autos: nuevosAutos } });
+
+  console.log("Auto actualizado correctamente en el tipo");
 };
 
 export const getTipos = async () => {
@@ -99,8 +102,10 @@ export const addTipo = async (tipo) => {
       throw new Error("Este tipo ya esta registrado.");
     }
 
-    const datos = await Tipos.insertOne(tipo);
-    return tipo;
+    const nuevoTipo = { ...tipo, eliminado: false, autos: [] };
+
+    const datos = await Tipos.insertOne(nuevoTipo);
+    return nuevoTipo;
   } catch (error) {
     console.error("Error al agregar tipo:", error);
   }

@@ -55,6 +55,52 @@ export const getAutos = async (filtros = {}) => {
   return db.collection("Autos").find(filterMongo).toArray();
 };
 
+export const getAutosAll = async (filtros = {}) => {
+  const filterMongo = { eliminado: { $ne: true } };
+  if (filtros.year !== undefined) {
+    filterMongo.year = { $eq: parseInt(filtros.year) };
+  }
+
+  if (filtros.horsepower !== undefined) {
+    filterMongo.horsepower = { $eq: parseInt(filtros.horsepower) };
+  }
+
+  if (filtros.brand !== undefined) {
+    filterMongo.brand = { $eq: filtros.brand };
+  }
+
+  if (filtros.usage !== undefined) {
+    filterMongo.usage = { $eq: filtros.usage };
+  }
+
+  if (filtros.oficial !== undefined) {
+    filterMongo.vendedor = { $exists: true, $ne: null };
+  }
+
+  if (filtros.precioMinimo !== undefined || filtros.preciMaximo !== undefined) {
+    filterMongo.$and = [];
+
+    if (filtros.precioMinimo !== undefined) {
+      filterMongo.$and.push({
+        price: { $gt: parseInt(filtros.precioMinimo) },
+      });
+    }
+
+    if (filtros.precioMaximo !== undefined) {
+      filterMongo.$and.push({
+        price: { $lt: parseInt(filtros.precioMaximo) },
+      });
+    }
+  }
+
+  if (filtros.description !== undefined) {
+    filterMongo.$text = { $search: filtros.description };
+  }
+
+  await cliente.connect();
+  return db.collection("Autos").find(filterMongo).toArray();
+};
+
 export const getAutoId = async (id) => {
   await cliente.connect();
   const datos = await db
@@ -113,7 +159,6 @@ export const agregarAuto = async (auto) => {
     };
 
     let date = new Date();
-
     const operaciones = [
       serviceMarcas.agregarAutoRelacionMarca(autoMarca),
       serviceTipos.agregarAutoRelacionTipo(autoMarca),
@@ -154,15 +199,20 @@ export const eliminadoLogico = async (id) => {
 
   await serviceMarcas.eliminarAutoDeMarcaLogico(id, datos.brand);
   await serviceTipos.eliminarAutoDeTipoLogico(id, datos.type);
+  if (datos.vendedor.email) {
+    await serviceVendedores.eliminarAutoDeVendedorLogico(
+      id,
+      datos.vendedor.email
+    );
+  }
+  let date = new Date();
+  await addUa(
+    datos?.vendedor.name,
+    datos?.vendedor.surname,
+    "Vehicle deleted",
+    date
+  );
   return id;
-};
-
-export const remplazarAuto = async (id, autoRemplazado) => {
-  await cliente.connect();
-  await db
-    .collection("Autos")
-    .replaceOne({ _id: ObjectId.createFromHexString(id) }, autoRemplazado);
-  return autoRemplazado;
 };
 
 export const comentarAuto = async (id, comentario) => {
@@ -233,6 +283,8 @@ export const actualizarAuto = async (id, autoActualizado) => {
       { $set: autoActualizado }
     );
 
+  console.log(autoUpdate);
+
   await serviceMarcas.actualizarAutoMarca(
     id,
     autoActualizado.brand,
@@ -240,8 +292,31 @@ export const actualizarAuto = async (id, autoActualizado) => {
   );
   await serviceTipos.actualizarAutoTipo(
     id,
-    autoActualizado.brand,
+    autoActualizado.type,
     autoActualizado
   );
+
+  if (autoActualizado?.vendedor?.email) {
+    await serviceVendedores.actualizarAutoVendedor(
+      id,
+      autoActualizado.vendedor.email,
+      autoActualizado
+    );
+  }
+  let date = new Date();
+  await addUa(
+    autoActualizado?.vendedor?.name,
+    autoActualizado?.vendedor?.surname,
+    "Vehicle updated",
+    date
+  );
   return autoUpdate;
+};
+
+export const remplazarAuto = async (id, autoRemplazado) => {
+  await cliente.connect();
+  await db
+    .collection("Autos")
+    .replaceOne({ _id: ObjectId.createFromHexString(id) }, autoRemplazado);
+  return autoRemplazado;
 };

@@ -10,7 +10,8 @@ const route = Router();
 
 route.get("/autos/tipos/:type", [validateToken], controllersPeugot.getAutoByType); // recurso
 route.get("/autos/:id", [validateToken], controllersPeugot.getAutoId); // recurso
-route.get("/autos", [validateToken], controllersPeugot.getAutos); // recurso
+route.get("/autos", [validateToken], controllersPeugot.getAutos); 
+route.get("/au/all", [validateToken], controllersPeugot.getAutosAll); 
 
 route.post("/autos", [validateAuto, validateToken], controllersPeugot.agregarAuto); // crear
 route.put("/autos/:id", [ validateToken, validateAction], controllersPeugot.remplazarAuto); // remplazar
