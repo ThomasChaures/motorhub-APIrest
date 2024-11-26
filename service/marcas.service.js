@@ -70,10 +70,11 @@ export const actualizarAutoMarca = async (auto_id, marca, auto) => {
     throw new Error("Marca no encontrada");
   }
 
+  const nuevoAuto = {...auto, auto_id: auto_id}
 
   // Actualizar la lista de autos
   const nuevosAutos = brand.autos.map((auto2) =>
-    auto2.auto_id === auto_id ? auto : auto2
+    auto2.auto_id === auto_id ? nuevoAuto : auto2
   );
 
   // Actualizar el documento de la marca en la base de datos

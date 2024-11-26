@@ -68,10 +68,12 @@ export const actualizarAutoTipo = async (auto_id, tipo, auto) => {
     throw new Error("Tipo no encontrado");
   }
 
+  const nuevoAuto = {...auto, auto_id: auto_id}
+
  
   // Actualizar el auto en el arreglo
   const nuevosAutos = types.autos.map((auto2) =>
-    auto2.auto_id === auto_id ? auto : auto2
+    auto2.auto_id === auto_id ? nuevoAuto : auto2
   );
 
   // Guardar los cambios en la base de datos

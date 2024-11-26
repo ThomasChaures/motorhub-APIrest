@@ -7,6 +7,7 @@ import apiTiposRutas from "./api/routes/tipos-api.routes.js";
 import apiLastActivity from './api/routes/lastActivity-routes.js'
 import multer from "multer";
 import cors from "cors";
+import sharp from "sharp";
 
 const app = express();
 app.use(express.static("img"));
@@ -35,12 +36,23 @@ const storage = multer.diskStorage({
   }
 })
 
+async function resizeImage(req, res, next){
+  return sharp(req.file.path)
+      .resize(1500)
+      .webp()
+      .toFile( "uploads/" + ( new Date().getTime() ) + ".webp" )
+      .then( () => {
+          console.log("Imagen redimencionada")
+          next()
+      } )
+      .catch( err => res.status(500).json({ "error": err }) )
+  }
+
  const upload = multer({"storage": storage})
 
-app.post("/upload", upload.single('file'), (req, res) => {
+app.post("/upload", [upload.single('file'), resizeImage], (req, res) => {
   console.log(req.file)
   const file = `${req.file.filename}`;
-  console.log(fileUrl)
   res.status(200).json({file: file})
 } )
 app.use('/uploads', express.static('uploads'));

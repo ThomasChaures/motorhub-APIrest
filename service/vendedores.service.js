@@ -119,13 +119,17 @@ export const actualizarAutoVendedor = async (auto_id, email, auto) => {
     return;
   }
 
+  const nuevoAuto = {...auto, auto_id: auto_id}
  
 
   const nuevosAutos = vendedor.autos_vendiendo.map((auto2) =>
-    auto2.auto_id === auto_id ? auto : auto2
+    auto2.auto_id === auto_id ? nuevoAuto : auto2
   );
 
+  
+  console.log(auto.status, nuevosAutos[0].status )
 
+  console.log("Auto actualizado correctamente en el vendedor");
   return await db
     .collection("Vendedores")
     .updateOne({ email: email }, { $set: { autos_vendiendo: nuevosAutos } });

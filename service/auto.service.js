@@ -172,7 +172,7 @@ export const agregarAuto = async (auto) => {
 
     if (auto.vendedor) {
       operaciones.push(
-        serviceVendedores.agregarAutosAlVendedor(nuevoAuto, auto.vendedor.email)
+        serviceVendedores.agregarAutosAlVendedor(autoMarca, auto.vendedor.email)
       );
     }
 
@@ -296,7 +296,7 @@ export const actualizarAuto = async (id, autoActualizado) => {
     autoActualizado
   );
 
-  if (autoActualizado?.vendedor?.email) {
+  if (autoActualizado.vendedor.email) {
     await serviceVendedores.actualizarAutoVendedor(
       id,
       autoActualizado.vendedor.email,
