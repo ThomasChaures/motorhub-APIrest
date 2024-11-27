@@ -56,50 +56,10 @@ export const getAutos = async (filtros = {}) => {
   return db.collection("Autos").find(filterMongo).toArray();
 };
 
-export const getAutosAll = async (filtros = {}) => {
-  const filterMongo = { eliminado: { $ne: true } };
-  if (filtros.year !== undefined) {
-    filterMongo.year = { $eq: parseInt(filtros.year) };
-  }
-
-  if (filtros.horsepower !== undefined) {
-    filterMongo.horsepower = { $eq: parseInt(filtros.horsepower) };
-  }
-
-  if (filtros.brand !== undefined) {
-    filterMongo.brand = { $eq: filtros.brand };
-  }
-
-  if (filtros.usage !== undefined) {
-    filterMongo.usage = { $eq: filtros.usage };
-  }
-
-  if (filtros.oficial !== undefined) {
-    filterMongo.vendedor = { $exists: true, $ne: null };
-  }
-
-  if (filtros.precioMinimo !== undefined || filtros.preciMaximo !== undefined) {
-    filterMongo.$and = [];
-
-    if (filtros.precioMinimo !== undefined) {
-      filterMongo.$and.push({
-        price: { $gt: parseInt(filtros.precioMinimo) },
-      });
-    }
-
-    if (filtros.precioMaximo !== undefined) {
-      filterMongo.$and.push({
-        price: { $lt: parseInt(filtros.precioMaximo) },
-      });
-    }
-  }
-
-  if (filtros.description !== undefined) {
-    filterMongo.$text = { $search: filtros.description };
-  }
+export const getAutosAll = async () => {
 
   await cliente.connect();
-  return db.collection("Autos").find(filterMongo).toArray();
+  return db.collection("Autos").find().toArray();
 };
 
 export const getAutoId = async (id) => {
@@ -134,7 +94,6 @@ export const agregarAuto = async (auto) => {
       let vendedor = await serviceVendedores.getClienteNombre(auto.vendedor);
       if (!vendedor) {
         const vendCliente = {
-          user_id: auto.vendedor.user_id,
           name: auto.vendedor.name,
           surname: auto.vendedor.surname,
           email: auto.vendedor.email,
@@ -275,8 +234,21 @@ export const responderComentario = async (id, respuesta, index) => {
   } catch (error) {}
 };
 
+
+export const getAutoId2 = async (id) => {
+  const datos = await db
+    .collection("Autos")
+    .findOne({ _id: ObjectId.createFromHexString(id) });
+  return datos;
+};
+
 export const actualizarAuto = async (id, autoActualizado) => {
+
+
+
+  console.log('update', autoActualizado)
   await cliente.connect();
+  const autoViejo = await getAutoId2(id)
   const autoUpdate = await db
     .collection("Autos")
     .updateOne(
@@ -284,28 +256,33 @@ export const actualizarAuto = async (id, autoActualizado) => {
       { $set: autoActualizado }
     );
 
+
+ 
   await serviceMarcas.actualizarAutoMarca(
     id,
-    autoActualizado.brand,
+    autoViejo.brand,
     autoActualizado
   );
   await serviceTipos.actualizarAutoTipo(
     id,
-    autoActualizado.type,
+    autoViejo.type,
     autoActualizado
   );
 
-  if (autoActualizado.vendedor.email) {
+  
+  
+  if (autoViejo.vendedor.email) {
     await serviceVendedores.actualizarAutoVendedor(
       id,
-      autoActualizado.vendedor.email,
+      autoViejo.vendedor.email,
       autoActualizado
     );
   }
+
   let date = new Date();
   await addUa(
-    autoActualizado?.vendedor?.name,
-    autoActualizado?.vendedor?.surname,
+    autoViejo?.vendedor.name,
+    autoViejo?.vendedor.surname,
     "Vehicle updated",
     date
   );
@@ -322,13 +299,13 @@ export const remplazarAuto = async (id, autoRemplazado) => {
 
 export const comprarAuto = async (id ,auto, user_id) => {
   
+  const autoC = {...auto, status: 'sold'}
  
- 
-  const autoComprado = await actualizarAuto(id, auto);
+  const autoComprado = await actualizarAuto(id, autoC);
 
 
 
-  const user = await serviceUsers.addAutoComprado(auto, user_id)
+  const user = await serviceUsers.addAutoComprado(autoC, user_id)
   
 
 

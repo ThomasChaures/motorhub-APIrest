@@ -89,14 +89,6 @@ export const eliminarAutoDeVendedorLogico = async (auto_id, email) => {
       return console.log("No se encontro el vendedor");
     }
 
-    const autoIndex = vendedor.autos_vendiendo.findIndex((auto) => {
-      auto.auto_id === auto_id;
-    });
-
-    if (autoIndex === null) {
-      return console.log("No se encontro el auto.");
-    }
-
     const nuevosAutos = vendedor.autos_vendiendo.map((auto) => {
       auto.auto_id === auto_id ? { ...auto, eliminado: true } : auto;
     });
@@ -114,6 +106,7 @@ export const eliminarAutoDeVendedorLogico = async (auto_id, email) => {
 export const actualizarAutoVendedor = async (auto_id, email, auto) => {
   const vendedor = await db.collection("Vendedores").findOne({ email: email });
 
+  console.log(vendedor)
   if (!vendedor) {
     console.log("No se encontró el vendedor");
     return;
@@ -127,7 +120,6 @@ export const actualizarAutoVendedor = async (auto_id, email, auto) => {
   );
 
   
-  console.log(auto.status, nuevosAutos[0].status )
 
   console.log("Auto actualizado correctamente en el vendedor");
   return await db

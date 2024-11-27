@@ -16,6 +16,8 @@ route.get("/usuario/:id", [validateToken], controller.getUser)
 
 route.get('/usuarios', [validateToken], controller.getUsers)
 
+route.patch('/usuario/edit/:id', [validateToken], controller.updateUser)
+
 route.post('/usuarios/admin/crear', [validateToken, validateUser, validateRol])
 
 export default route;

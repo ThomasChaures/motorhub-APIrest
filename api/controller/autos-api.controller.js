@@ -14,10 +14,9 @@ export const getAutos = (req, res) => {
 };
 
 export const getAutosAll = (req, res) => {
-  const filtros = req.query;
 
   service
-    .getAutosAll(filtros)
+    .getAutosAll()
     .then((autos) => {
       res.status(200).json(autos);
     })

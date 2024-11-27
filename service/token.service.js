@@ -12,7 +12,7 @@ export async function crearToken(usuario) {
 
   await cliente.connect();
 
-  await tokens.insertOne({ token: token, usuario_id: usuario._id });
+  await tokens.insertOne({ token: token, usuario_id: usuario._id, role: usuario.role });
 
   return token;
 }

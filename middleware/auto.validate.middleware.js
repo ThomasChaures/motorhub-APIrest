@@ -22,16 +22,16 @@ export async function validateAction(req, res, next) {
 
     const autoId = req.params.id;
 
+  
  
     const auto = await getAutoId(autoId); 
-
-
+    console.log(user, auto)
     if (!auto) {
       return res.status(404).json({ message: "Auto no encontrado" });
     }
 
 
-    if (user.role === "Admin" || auto.vendedor.email === user.email) {
+    if (user.role === "Admin" || auto?.vendedor?.email === user?.email) {
       return next(); 
     }
 
