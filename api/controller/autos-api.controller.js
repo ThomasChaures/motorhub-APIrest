@@ -82,8 +82,8 @@ export const comentarAuto = (req, res) => {
 
 export const responderComentario = async (req, res) => {
   const { id, index } = req.params;
-  console.log(req.params)
-  console.log(req.body)
+  console.log(req.params);
+  console.log(req.body);
   service
     .responderComentario(id, req.body, index)
     .then((comentario) => res.status(201).json(comentario))
@@ -102,8 +102,8 @@ export const remplazarAuto = (req, res) => {
 };
 
 export const actualizarAuto = (req, res) => {
-  console.log(req.body)
-  console.log(req.params.id)
+  console.log(req.body);
+  console.log(req.params.id);
   service
     .actualizarAuto(req.params.id, req.body)
     .then((auto) => res.status(201).json(auto))
@@ -116,6 +116,15 @@ export const eliminadoLogico = (req, res) => {
   service
     .eliminadoLogico(req.params.id)
     .then((id) => res.status(202).json({ id: id }))
+    .catch((err) => {
+      res.status(400).json({ message: err });
+    });
+};
+
+export const comprarAuto = (req, res) => {
+  service
+    .comprarAuto( req.params.id, req.body, req.params.user_id)
+    .then((id) => res.status(201).json({ id: id }))
     .catch((err) => {
       res.status(400).json({ message: err });
     });

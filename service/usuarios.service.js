@@ -19,7 +19,13 @@ export async function createUser(usuario) {
     return { error: "Usuario no disponible." };
   }
 
-  const nuevoUsuario = { ...usuario, eliminado: false, passwordConfirm: undefined, role: "User" };
+  const nuevoUsuario = {
+    ...usuario,
+    autos_comprados: [],
+    eliminado: false,
+    passwordConfirm: undefined,
+    role: "User",
+  };
   nuevoUsuario.password = await bcrypt.hash(usuario.password, 10);
 
   const res = await usuarios.insertOne(nuevoUsuario);
@@ -58,7 +64,11 @@ export async function createAdmin(usuario) {
     return { error: "Usuario no disponible." };
   }
 
-  const nuevoUsuario = { ...usuario, eliminado: false, passwordConfirm: undefined,};
+  const nuevoUsuario = {
+    ...usuario,
+    eliminado: false,
+    passwordConfirm: undefined,
+  };
   nuevoUsuario.password = await bcrypt.hash(usuario.password, 10);
 
   const res = await usuarios.insertOne(nuevoUsuario);
@@ -68,7 +78,7 @@ export async function createAdmin(usuario) {
     surname: usuario.surname,
     email: usuario.email,
     autos_vendiendo: [],
-    eliminado: false
+    eliminado: false,
   };
   await serviceVendedores.agregarCliente(vendCliente);
 
@@ -118,4 +128,33 @@ export async function getUsers() {
   const users = await db.collection("usuarios").find().toArray();
 
   return users;
+}
+
+export async function getUser2(id) {
+  console.log(id);
+  const existe = await usuarios.findOne({ _id: new ObjectId(id) });
+
+  if (!existe) throw new Error("No existe este usuario");
+  console.log(`EXISTE: ${existe._id}`);
+  return { ...existe, password: undefined, passwordConfirm: undefined };
+}
+
+export async function addAutoComprado(auto, user_id) {
+  console.log(user_id)
+  const user = await getUser2(user_id);
+  console.log(user)
+
+  const autosComprados = user.autos_comprados;
+  console.log(autosComprados)
+
+  autosComprados.push(auto);
+
+  await db
+    .collection("usuarios")
+    .updateOne(
+      { _id: new ObjectId(user_id) },
+      { $set: { autos_comprados: autosComprados } }
+    );
+
+  return user;
 }

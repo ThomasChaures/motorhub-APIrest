@@ -2,6 +2,7 @@ import { MongoClient, ObjectId } from "mongodb";
 import * as serviceVendedores from "./vendedores.service.js";
 import * as serviceMarcas from "./marcas.service.js";
 import * as serviceTipos from "./tipos.service.js";
+import * as serviceUsers from "./usuarios.service.js";
 import { addUa } from "./lastActivity.service.js";
 
 const cliente = new MongoClient(
@@ -283,8 +284,6 @@ export const actualizarAuto = async (id, autoActualizado) => {
       { $set: autoActualizado }
     );
 
-  console.log(autoUpdate);
-
   await serviceMarcas.actualizarAutoMarca(
     id,
     autoActualizado.brand,
@@ -319,4 +318,19 @@ export const remplazarAuto = async (id, autoRemplazado) => {
     .collection("Autos")
     .replaceOne({ _id: ObjectId.createFromHexString(id) }, autoRemplazado);
   return autoRemplazado;
+};
+
+export const comprarAuto = async (id ,auto, user_id) => {
+  
+ 
+ 
+  const autoComprado = await actualizarAuto(id, auto);
+
+
+
+  const user = await serviceUsers.addAutoComprado(auto, user_id)
+  
+
+
+  return true
 };

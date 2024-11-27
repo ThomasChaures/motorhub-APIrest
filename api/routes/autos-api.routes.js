@@ -13,6 +13,8 @@ route.get("/autos/:id", [validateToken], controllersPeugot.getAutoId); // recurs
 route.get("/autos", [validateToken], controllersPeugot.getAutos); 
 route.get("/au/all", [validateToken], controllersPeugot.getAutosAll); 
 
+route.patch("/autos/compra/:id/:user_id", [validateToken], controllersPeugot.comprarAuto)
+
 route.post("/autos", [validateAuto, validateToken], controllersPeugot.agregarAuto); // crear
 route.put("/autos/:id", [ validateToken, validateAction], controllersPeugot.remplazarAuto); // remplazar
 route.patch("/autos/:id", [validateToken, validateAction], controllersPeugot.actualizarAuto); // actualizar

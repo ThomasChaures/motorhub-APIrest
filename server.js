@@ -50,7 +50,7 @@ async function resizeImage(req, res, next){
 
  const upload = multer({"storage": storage})
 
-app.post("/upload", [upload.single('file'), resizeImage], (req, res) => {
+app.post("/upload", upload.single('file'), (req, res) => {
   console.log(req.file)
   const file = `${req.file.filename}`;
   res.status(200).json({file: file})
